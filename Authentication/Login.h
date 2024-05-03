@@ -1,6 +1,8 @@
 #include <msclr\marshal_cppstd.h> // For converting System::String^ to std::string
 #include <map>
 #include <string>
+#include "Dashboard.h"
+#include "Data.h"
 
 using namespace System;
 using namespace std;
@@ -196,24 +198,19 @@ namespace Authentication {
 		}
 #pragma endregion
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
-		map<string, string> dictionary = {
-			{"admin", "password"},
-			{"admin1", "password1"},
-			{"admin2", "password2"}
-		};
-
 		String^ username = Convert::ToString(textBox1->Text);
 		String^ password = Convert::ToString(textBox2->Text);
 
 		string usernameStr = msclr::interop::marshal_as<string>(username);
 		string passwordStr = msclr::interop::marshal_as<string>(password);
 
-		auto it = dictionary.find(usernameStr);
-		if (it != dictionary.end() && it->second == passwordStr) {
-			label6->Text = "Ruxsat bor!";
-		}
-		else {
-			label6->Text = "Ruxsat yo'q!";
+		for (const auto& user : users) {
+			if (user.id == usernameStr && user.parol == passwordStr) {
+				Dashboard^ dashboardForm = gcnew Dashboard(user);
+				dashboardForm->Show();
+				this->Hide();
+				return; 
+			}
 		}
 	}
 };
